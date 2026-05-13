@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brasil lança primeiro satélite 100% nacional de observação climática - Espaço Tech</title>
+    <meta name="description" content="Amazonia-2, primeiro satélite brasileiro desenvolvido inteiramente com tecnologia nacional, vai monitorar o desmatamento e as mudanças climáticas em tempo real.">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --deep-space: #0B0E14;
+            --space-blue: #1A1F2E;
+            --vibrant-orange: #FF6B35;
+            --warm-yellow: #FFB347;
+            --soft-purple: #8B5FBF;
+            --light-blue: #4EC5D4;
+            --white: #FFFFFF;
+            --off-white: #F5F5F5;
+            --card-bg: rgba(255,255,255,0.04);
+            --font-sm: clamp(0.85rem, 2vw, 0.95rem);
+            --font-md: clamp(0.95rem, 2.5vw, 1.1rem);
+            --font-lg: clamp(1.8rem, 4vw, 2.8rem);
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--deep-space);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 0;
+        }
+        .star {
+            position: absolute;
+            background: var(--white);
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.3); }
+        }
+
+        .scroll-progress {
+            position: fixed; top: 0; left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--vibrant-orange), var(--warm-yellow));
+            z-index: 1000;
+            width: 0%;
+        }
+
+        header {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 50;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(12px);
+            background: rgba(11,14,20,0.6);
+            transition: all 0.3s ease;
+        }
+        header.scrolled {
+            padding: 0.6rem 5%;
+            background: rgba(11,14,20,0.95);
+        }
+
+        .logo {
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
+            font-weight: 700;
+            color: var(--vibrant-orange);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .logo:hover {
+            color: var(--warm-yellow);
+            transform: scale(1.03);
+        }
+
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        nav a:hover { color: var(--vibrant-orange); }
+
+        .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 8rem 5% 3rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .article-header {
+            margin-bottom: 2rem;
+        }
+
+        .article-category {
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(255,179,71,0.2);
+            color: var(--warm-yellow);
+            margin-bottom: 1rem;
+        }
+
+        .article-header h1 {
+            font-size: var(--font-lg);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--vibrant-orange), var(--warm-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .article-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+        .article-image {
+            width: 100%;
+            height: 400px;
+            background: url('https://picsum.photos/seed/amazonia-satelite/800/500') center/cover;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .article-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: linear-gradient(180deg, transparent 50%, var(--deep-space) 100%);
+        }
+        .image-caption {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.3);
+            text-align: center;
+            margin-top: -1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .article-body h2 {
+            color: var(--vibrant-orange);
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+        }
+
+        .article-body h3 {
+            color: var(--warm-yellow);
+            font-size: 1.15rem;
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        .article-body p {
+            color: var(--off-white);
+            line-height: 1.9;
+            font-size: 1.05rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .article-body blockquote {
+            border-left: 3px solid var(--vibrant-orange);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            background: rgba(255,107,53,0.05);
+            border-radius: 0 12px 12px 0;
+            font-style: italic;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .article-body ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+        .article-body li {
+            color: var(--off-white);
+            line-height: 1.8;
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .article-body .highlight-box {
+            background: rgba(78,197,212,0.08);
+            border: 1px solid rgba(78,197,212,0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .highlight-box strong {
+            color: var(--light-blue);
+        }
+
+        .share-section {
+            margin: 3rem 0;
+            padding: 2rem 0;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .share-section h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: rgba(255,255,255,0.5);
+        }
+        .share-buttons {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .share-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .share-btn.twitter { background: rgba(29,161,242,0.15); color: #1DA1F2; }
+        .share-btn.facebook { background: rgba(66,103,178,0.15); color: #4267B2; }
+        .share-btn.whatsapp { background: rgba(37,211,102,0.15); color: #25D366; }
+        .share-btn.copy { background: rgba(255,255,255,0.06); color: var(--off-white); }
+        .share-btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--vibrant-orange);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover { color: var(--warm-yellow); transform: translateX(-3px); }
+
+        footer {
+            position: relative;
+            z-index: 10;
+            padding: 2rem 5%;
+            text-align: center;
+            background: rgba(11,14,20,0.95);
+            color: rgba(255,255,255,0.3);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        footer a { color: var(--vibrant-orange); text-decoration: none; }
+        footer a:hover { color: var(--warm-yellow); }
+
+        @media (max-width: 768px) {
+            .article-image { height: 250px; }
+            .article-body p { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    <div class="stars" id="stars"></div>
+
+    <header id="header">
+        <a href="index.html" class="logo">🚀 Espaço Tech</a>
+        <nav>
+            <a href="index.html">← Voltar ao Blog</a>
+        </nav>
+    </header>
+
+    <main class="article-container">
+        <a href="index.html" class="back-link">← Voltar ao blog</a>
+
+        <article>
+            <div class="article-header">
+                <span class="article-category">📡 Notícias</span>
+                <h1>Brasil lança primeiro satélite 100% nacional de observação climática</h1>
+                <div class="article-meta">
+                    <span>📅 7 Maio 2026</span>
+                    <span>👁️ 5.2K visualizações</span>
+                    <span>⏱️ 6 min de leitura</span>
+                </div>
+            </div>
+
+            <div class="article-image"></div>
+            <div class="image-caption">Lançamento do satélite Amazonia-2 do centro espacial de Alcântara. Fonte: INPE</div>
+
+            <div class="article-body">
+                <p>O Brasil acaba de escrever um novo capítulo em sua história espacial. O <strong>Amazonia-2</strong>, primeiro satélite de observação da Terra desenvolvido inteiramente com tecnologia nacional, foi lançado com sucesso na manhã desta quinta-feira do Centro de Lançamento de Alcântara, no Maranhão. O foguete sul-coreano KSLV-II colocou o satélite em órbita polar a 628 km de altitude.</p>
+
+                <p>O projeto é fruto de uma parceria entre o <strong>Instituto Nacional de Pesquisas Espaciais (INPE)</strong> e a <strong>Agência Espacial Brasileira (AEB)</strong>, com investimento total de R$ 480 milhões. Diferente de seus antecessores — o CBERS-4 e o Amazonia-1, que tinham componentes importados — o Amazonia-2 foi projetado, fabricado e testado integralmente no Brasil.</p>
+
+                <blockquote>"Este é o momento mais importante do programa espacial brasileiro desde a criação da AEB. O Amazonia-2 prova que o Brasil tem capacidade tecnológica para construir satélites de ponta do zero. Estamos monitorando a Amazônia com nossos próprios olhos", afirmou o ministro da Ciência, Tecnologia e Inovação, durante a cerimônia de lançamento.</blockquote>
+
+                <h2>🛰️ Especificações técnicas do Amazonia-2</h2>
+
+                <p>O Amazonia-2 é um satélite de médio porte, pesando aproximadamente 680 kg. Sua vida útil estimada é de 8 anos, e ele opera em órbita heliossíncrona — o que significa que passa sobre qualquer ponto da Terra sempre no mesmo horário local, ideal para monitoramento comparativo.</p>
+
+                <div class="highlight-box">
+                    <strong>🔬 Especificações técnicas:</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li>Massa: 680 kg</li>
+                        <li>Órbita: Heliossíncrona a 628 km de altitude</li>
+                        <li>Sensores: Multiespectral (13 bandas) e Radar de Abertura Sintética (SAR)</li>
+                        <li>Resolução: 2,5 m (pancromática) e 10 m (multiespectral)</li>
+                        <li>Largura de faixa: 120 km por passagem</li>
+                        <li>Vida útil: 8 anos</li>
+                        <li>Capacidade de revisita: 3 dias</li>
+                    </ul>
+                </div>
+
+                <p>O grande diferencial tecnológico do Amazonia-2 é o <strong>Radar de Abertura Sintética (SAR)</strong> em banda L, desenvolvido pelo Instituto Tecnológico de Aeronáutica (ITA). Diferente de sensores ópticos, o SAR enxerga através das nuvens — uma vantagem crucial para monitorar a Amazônia, onde a cobertura de nuvens chega a 80% durante boa parte do ano.</p>
+
+                <h2>🌳 Monitoramento do desmatamento em tempo real</h2>
+
+                <p>A principal missão do Amazonia-2 é fornecer dados diários sobre o desmatamento na Amazônia Legal e em outros biomas brasileiros. O satélite é capaz de detectar áreas tão pequenas quanto 2,5 metros — o suficiente para identificar um único corte ilegal de árvores.</p>
+
+                <p>Os dados são transmitidos para a estação terrena do INPE em Cachoeira Paulista (SP) e processados em até 4 horas após a passagem do satélite. O sistema DETER (Detecção de Desmatamento em Tempo Real) será alimentado exclusivamente pelo Amazonia-2, substituindo gradualmente a dependência de satélites estrangeiros como o Landsat (EUA) e o Sentinel (Europa).</p>
+
+                <p>"Com o Amazonia-2, vamos reduzir de 15 para 3 dias o intervalo entre a detecção de um desmatamento e a autuação pelos órgãos ambientais", explicou a diretora do INPE. "Isso muda radicalmente a capacidade de fiscalização do Ibama e da Polícia Federal."</p>
+
+                <h2>📊 Coleta de dados climáticos</h2>
+
+                <p>Além do monitoramento do desmatamento, o Amazonia-2 carrega uma carga de instrumentos para coleta de dados climáticos: radiômetros de alta precisão que medem a temperatura da superfície, a umidade do solo e a concentração de aerossóis na atmosfera.</p>
+
+                <p>Esses dados alimentarão os modelos do <strong>Centro Nacional de Monitoramento e Alertas de Desastres Naturais (CEMADEN)</strong> e do INMET, melhorando a precisão das previsões meteorológicas e dos alertas de eventos extremos como secas, enchentes e queimadas.</p>
+
+                <h2>🌍 Comparação com satélites internacionais</h2>
+
+                <p>O Amazonia-2 se posiciona de forma competitiva no cenário internacional. Sua resolução de 2,5 m é comparável à do Sentinel-2 europeu (10 m) e do Landsat 9 americano (15 m), mas com a vantagem do SAR embarcado — algo que apenas satélites militares e o Radarsat canadense possuem.</p>
+
+                <p>Em termos de capacidade de revisita (3 dias), o Amazonia-2 supera o Landsat 9 (16 dias) e empata com a constelação Sentinel-2 (5 dias com 2 satélites). A diferença é que o Brasil agora tem <strong>autonomia total</strong> sobre a coleta e o processamento dos dados, sem depender de políticas externas ou restrições de acesso.</p>
+
+                <h2>🇧🇷 Implicações para a política ambiental</h2>
+
+                <p>O Amazonia-2 chega em um momento crucial para a política ambiental brasileira. Com a crescente pressão internacional por transparência no monitoramento da Amazônia, ter um satélite 100% nacional dá ao Brasil soberania sobre os dados de desmatamento — e capacidade de responder rapidamente a acusações ou cobranças internacionais.</p>
+
+                <p>"Dados de desmatamento sempre foram motivo de controvérsia", lembrou o diretor de Política Ambiental do Ministério do Meio Ambiente. "Quando o dado vem de um satélite estrangeiro, sempre há margem para questionamento. Agora, o Brasil produz seus próprios números, com sua própria tecnologia, e isso fortalece nossa posição nas negociações climáticas globais."</p>
+
+                <p>Os dados do Amazonia-2 serão públicos e gratuitos, mantendo a tradição do INPE de disponibilizar livremente as imagens de satélite para pesquisadores, ONGs e a sociedade civil.</p>
+
+                <h2>🚀 O futuro do programa espacial brasileiro</h2>
+
+                <p>O sucesso do Amazonia-2 abre caminho para a próxima geração de satélites nacionais. Já estão em desenvolvimento o <strong>Amazonia-3</strong> (com resolução de 1 metro) e o <strong>Geoestacionário Brasileiro</strong>, que deve entrar em operação em 2030 para comunicações seguras e monitoramento contínuo.</p>
+
+                <p>O Centro de Lançamento de Alcântara também está sendo modernizado para receber lançadores nacionais — o projeto do <strong>Veículo Lançador de Satélites (VLS)</strong> foi retomado em 2024 com novo design e orçamento robusto. Se tudo correr bem, o Brasil poderá lançar seus próprios satélites a partir de seu próprio território até 2032.</p>
+
+                <p>O Amazonia-2 já enviou suas primeiras imagens da Amazônia, e segundo o INPE, a qualidade superou as expectativas. O Brasil, enfim, começa a ver a floresta com seus próprios olhos.</p>
+            </div>
+        </article>
+
+        <div class="share-section">
+            <h3>📢 Compartilhe este artigo</h3>
+            <div class="share-buttons">
+                <a href="#" class="share-btn twitter" onclick="window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.title)+'%20'+encodeURIComponent(window.location.href),'_blank')">🐦 Twitter</a>
+                <a href="#" class="share-btn facebook" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href),'_blank')">📘 Facebook</a>
+                <a href="#" class="share-btn whatsapp" onclick="window.open('https://wa.me/?text='+encodeURIComponent(document.title+' - '+window.location.href),'_blank')">💬 WhatsApp</a>
+                <a href="#" class="share-btn copy" onclick="navigator.clipboard.writeText(window.location.href);alert('Link copiado!')">📋 Copiar link</a>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-link">← Voltar para o blog</a>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Espaço Tech | <a href="privacidade.html">Privacidade</a> | <a href="termos.html">Termos</a></p>
+    </footer>
+
+    <script>
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            const size = Math.random() * 2.5 + 0.5;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.setProperty('--duration', (Math.random() * 3 + 1) + 's');
+            starsContainer.appendChild(star);
+        }
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            document.getElementById('scrollProgress').style.width = (scrollTop / docHeight) * 100 + '%';
+            document.getElementById('header').classList.toggle('scrolled', scrollTop > 50);
+        });
+    </script>
+</body>
+</html>

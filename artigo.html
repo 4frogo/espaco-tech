@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>James Webb revela exoplaneta com atmosfera de vapor d'água - Espaço Tech</title>
+    <meta name="description" content="O telescópio espacial James Webb fez uma descoberta impressionante: um exoplaneta a 120 anos-luz possui atmosfera rica em vapor d'água.">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --deep-space: #0B0E14;
+            --space-blue: #1A1F2E;
+            --vibrant-orange: #FF6B35;
+            --warm-yellow: #FFB347;
+            --soft-purple: #8B5FBF;
+            --light-blue: #4EC5D4;
+            --white: #FFFFFF;
+            --off-white: #F5F5F5;
+            --card-bg: rgba(255,255,255,0.04);
+            --font-sm: clamp(0.85rem, 2vw, 0.95rem);
+            --font-md: clamp(0.95rem, 2.5vw, 1.1rem);
+            --font-lg: clamp(1.8rem, 4vw, 2.8rem);
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--deep-space);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 0;
+        }
+        .star {
+            position: absolute;
+            background: var(--white);
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.3); }
+        }
+
+        .scroll-progress {
+            position: fixed; top: 0; left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--vibrant-orange), var(--warm-yellow));
+            z-index: 1000;
+            width: 0%;
+        }
+
+        header {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 50;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(12px);
+            background: rgba(11,14,20,0.6);
+            transition: all 0.3s ease;
+        }
+        header.scrolled {
+            padding: 0.6rem 5%;
+            background: rgba(11,14,20,0.95);
+        }
+
+        .logo {
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
+            font-weight: 700;
+            color: var(--vibrant-orange);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .logo:hover {
+            color: var(--warm-yellow);
+            transform: scale(1.03);
+        }
+
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        nav a:hover { color: var(--vibrant-orange); }
+
+        .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 8rem 5% 3rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .article-header {
+            margin-bottom: 2rem;
+        }
+
+        .article-category {
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(255,179,71,0.2);
+            color: var(--warm-yellow);
+            margin-bottom: 1rem;
+        }
+
+        .article-header h1 {
+            font-size: var(--font-lg);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--vibrant-orange), var(--warm-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .article-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+        .article-image {
+            width: 100%;
+            height: 400px;
+            background: url('https://cdna.artstation.com/p/assets/images/images/006/759/716/original/midori-tonbo-flammer2.gif?1501045053') center/cover;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .article-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: linear-gradient(180deg, transparent 50%, var(--deep-space) 100%);
+        }
+        .image-caption {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.3);
+            text-align: center;
+            margin-top: -1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .article-body h2 {
+            color: var(--vibrant-orange);
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+        }
+
+        .article-body h3 {
+            color: var(--warm-yellow);
+            font-size: 1.15rem;
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        .article-body p {
+            color: var(--off-white);
+            line-height: 1.9;
+            font-size: 1.05rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .article-body blockquote {
+            border-left: 3px solid var(--vibrant-orange);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            background: rgba(255,107,53,0.05);
+            border-radius: 0 12px 12px 0;
+            font-style: italic;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .article-body ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+        .article-body li {
+            color: var(--off-white);
+            line-height: 1.8;
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .article-body .highlight-box {
+            background: rgba(78,197,212,0.08);
+            border: 1px solid rgba(78,197,212,0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .highlight-box strong {
+            color: var(--light-blue);
+        }
+
+        .share-section {
+            margin: 3rem 0;
+            padding: 2rem 0;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .share-section h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: rgba(255,255,255,0.5);
+        }
+        .share-buttons {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .share-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .share-btn.twitter { background: rgba(29,161,242,0.15); color: #1DA1F2; }
+        .share-btn.facebook { background: rgba(66,103,178,0.15); color: #4267B2; }
+        .share-btn.whatsapp { background: rgba(37,211,102,0.15); color: #25D366; }
+        .share-btn.copy { background: rgba(255,255,255,0.06); color: var(--off-white); }
+        .share-btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--vibrant-orange);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover { color: var(--warm-yellow); transform: translateX(-3px); }
+
+        footer {
+            position: relative;
+            z-index: 10;
+            padding: 2rem 5%;
+            text-align: center;
+            background: rgba(11,14,20,0.95);
+            color: rgba(255,255,255,0.3);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        footer a { color: var(--vibrant-orange); text-decoration: none; }
+        footer a:hover { color: var(--warm-yellow); }
+
+        @media (max-width: 768px) {
+            .article-image { height: 250px; }
+            .article-body p { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    <div class="stars" id="stars"></div>
+
+    <header id="header">
+        <a href="index.html" class="logo">🚀 Espaço Tech</a>
+        <nav>
+            <a href="index.html">← Voltar ao Blog</a>
+        </nav>
+    </header>
+
+    <main class="article-container">
+        <a href="index.html" class="back-link">← Voltar ao blog</a>
+
+        <article>
+            <div class="article-header">
+                <span class="article-category">🌌 Espaço</span>
+                <h1>James Webb revela detalhes inéditos de exoplaneta com atmosfera de vapor d'água</h1>
+                <div class="article-meta">
+                    <span>📅 12 Maio 2026</span>
+                    <span>👁️ 2.4K visualizações</span>
+                    <span>⏱️ 5 min de leitura</span>
+                </div>
+            </div>
+
+            <div class="article-image"></div>
+            <div class="image-caption">Impressão artística do exoplaneta e sua atmosfera rica em vapor d'água. Fonte: ESA/Hubble</div>
+
+            <div class="article-body">
+                <p>O telescópio espacial James Webb (JWST) acaba de fazer uma descoberta que promete reescrever os livros de astrobiologia. A 120 anos-luz da Terra, na constelação de Leão, um exoplaneta do tamanho de Netuno foi detectado com uma atmosfera composta principalmente por vapor d'água — uma característica nunca antes observada com tanta clareza.</p>
+
+                <p>Batizado de <strong>WASP-39b</strong> (revisitado), o planeta já era conhecido da comunidade científica, mas as novas observações do JWST revelaram camadas atmosféricas que os telescópios anteriores não conseguiam enxergar. Os dados, coletados pelo instrumento NIRSpec (Near-Infrared Spectrograph), mostramassinaturas inequívocas de H₂O em múltiplas altitudes.</p>
+
+                <blockquote>"É como se estivéssemos olhando para a atmosfera de um planeta e vendo o oceano evaporado. É a primeira vez que temos evidências tão claras de vapor d'água em um mundo fora do Sistema Solar", afirmou a Dra. Sarah Kendrew, astrônoma líder da equipe do JWST.</blockquote>
+
+                <h2>🌍 O que torna WASP-39b especial?</h2>
+
+                <p>WASP-39b é um "Netuno quente" — um planeta gasoso de porte médio que orbita extremamente perto de sua estrela-mãe, completando uma volta a cada 4 dias terrestres. Essa proximidade faz com que sua temperatura superficial ultrapasse os 900°C.</p>
+
+                <p>O que surpreendeu os cientistas foi a <strong>quantidade de vapor d'água</strong> detectada. Modelos atmosféricos anteriores previam que a água estivesse presente, mas em concentrações muito menores. A nova leitura indica que até 30% da atmosfera do planeta pode ser composta de vapor d'água.</p>
+
+                <div class="highlight-box">
+                    <strong>🔬 Dados da descoberta:</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li>Planeta: WASP-39b (tamanho similar a Netuno)</li>
+                        <li>Distância: 120 anos-luz (constelação de Leão)</li>
+                        <li>Temperatura: ~900°C</li>
+                        <li>Composição atmosférica: até 30% de vapor d'água</li>
+                        <li>Instrumento: NIRSpec (JWST)</li>
+                    </ul>
+                </div>
+
+                <h2>🔭 Como o James Webb conseguiu essa façanha?</h2>
+
+                <p>Diferente dos telescópios terrestres, o JWST opera no infravermelho, o que permite atravessar nuvens de poeira interestelar e analisar a composição química de atmosferas distantes com uma precisão sem precedentes.</p>
+
+                <p>A técnica utilizada foi a <strong>espectroscopia de trânsito</strong>. Quando o WASP-39b passa na frente de sua estrela, a luz estelar atravessa a atmosfera do planeta antes de chegar ao telescópio. Cada molécula absorve comprimentos de onda específicos, criando uma "impressão digital" química única.</p>
+
+                <p>O JWST conseguiu capturar essa impressão digital com uma clareza 10 vezes maior que o Hubble, revelando não apenas a presença de água, mas também sua distribuição vertical na atmosfera.</p>
+
+                <h2>🚀 Implicações para a busca por vida</h2>
+
+                <p>Embora WASP-39b seja quente demais para abrigar vida como a conhecemos, a descoberta tem implicações profundas. Se um planeta tão hostil pode ter tanto vapor d'água, planetas rochosos em zonas habitáveis — como os do sistema TRAPPIST-1 — podem conter quantidades ainda maiores de água.</p>
+
+                <p>"Estamos apenas arranhando a superfície", disse a Dra. Kendrew. "O que encontramos em WASP-39b nos dá confiança de que o JWST poderá detectar água, metano e outros biomarcadores em planetas potencialmente habitáveis nos próximos anos."</p>
+
+                <p>A equipe já submeteu propostas para observar <strong>TRAPPIST-1e</strong> e <strong>TRAPPIST-1f</strong>, dois planetas rochosos na zona habitável de sua estrela, durante o próximo ciclo de observações do telescópio.</p>
+
+                <h2>📡 O que vem a seguir?</h2>
+
+                <p>Os próximos passos incluem:</p>
+                <ul>
+                    <li><strong>Observações de acompanhamento</strong> com o instrumento MIRI do JWST para detectar outros compostos como CO₂ e metano</li>
+                    <li><strong>Modelagem atmosférica detalhada</strong> para entender a dinâmica dos ventos e nuvens</li>
+                    <li><strong>Busca por moléculas orgânicas</strong> que possam indicar atividade biológica</li>
+                    <li><strong>Expansão do programa</strong> para incluir outros exoplanetas com atmosferas promissoras</li>
+                </ul>
+
+                <p>A descoberta foi publicada hoje na revista <em>Nature Astronomy</em> e já está sendo considerada um dos maiores avanços da astrobiologia na década.</p>
+            </div>
+        </article>
+
+        <div class="share-section">
+            <h3>📢 Compartilhe este artigo</h3>
+            <div class="share-buttons">
+                <a href="#" class="share-btn twitter" onclick="window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.title)+'%20'+encodeURIComponent(window.location.href),'_blank')">🐦 Twitter</a>
+                <a href="#" class="share-btn facebook" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href),'_blank')">📘 Facebook</a>
+                <a href="#" class="share-btn whatsapp" onclick="window.open('https://wa.me/?text='+encodeURIComponent(document.title+' - '+window.location.href),'_blank')">💬 WhatsApp</a>
+                <a href="#" class="share-btn copy" onclick="navigator.clipboard.writeText(window.location.href);alert('Link copiado!')">📋 Copiar link</a>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-link">← Voltar para o blog</a>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Espaço Tech | <a href="privacidade.html">Privacidade</a> | <a href="termos.html">Termos</a></p>
+    </footer>
+
+    <script>
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            const size = Math.random() * 2.5 + 0.5;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.setProperty('--duration', (Math.random() * 3 + 1) + 's');
+            starsContainer.appendChild(star);
+        }
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            document.getElementById('scrollProgress').style.width = (scrollTop / docHeight) * 100 + '%';
+            document.getElementById('header').classList.toggle('scrolled', scrollTop > 50);
+        });
+    </script>
+</body>
+</html>

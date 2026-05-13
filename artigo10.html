@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAssembly ultrapassa JavaScript em performance em novos benchmarks - Espaço Tech</title>
+    <meta name="description" content="WebAssembly supera JavaScript em até 300% em tarefas intensivas de CPU, apontam novos benchmarks da equipe V8.">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --deep-space: #0B0E14;
+            --space-blue: #1A1F2E;
+            --vibrant-orange: #FF6B35;
+            --warm-yellow: #FFB347;
+            --soft-purple: #8B5FBF;
+            --light-blue: #4EC5D4;
+            --white: #FFFFFF;
+            --off-white: #F5F5F5;
+            --card-bg: rgba(255,255,255,0.04);
+            --font-sm: clamp(0.85rem, 2vw, 0.95rem);
+            --font-md: clamp(0.95rem, 2.5vw, 1.1rem);
+            --font-lg: clamp(1.8rem, 4vw, 2.8rem);
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--deep-space);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 0;
+        }
+        .star {
+            position: absolute;
+            background: var(--white);
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.3); }
+        }
+
+        .scroll-progress {
+            position: fixed; top: 0; left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--vibrant-orange), var(--warm-yellow));
+            z-index: 1000;
+            width: 0%;
+        }
+
+        header {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 50;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(12px);
+            background: rgba(11,14,20,0.6);
+            transition: all 0.3s ease;
+        }
+        header.scrolled {
+            padding: 0.6rem 5%;
+            background: rgba(11,14,20,0.95);
+        }
+
+        .logo {
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
+            font-weight: 700;
+            color: var(--vibrant-orange);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .logo:hover {
+            color: var(--warm-yellow);
+            transform: scale(1.03);
+        }
+
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        nav a:hover { color: var(--vibrant-orange); }
+
+        .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 8rem 5% 3rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .article-header {
+            margin-bottom: 2rem;
+        }
+
+        .article-category {
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(78,197,212,0.2);
+            color: var(--light-blue);
+            margin-bottom: 1rem;
+        }
+
+        .article-header h1 {
+            font-size: var(--font-lg);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--vibrant-orange), var(--warm-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .article-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+        .article-image {
+            width: 100%;
+            height: 400px;
+            background: url('https://picsum.photos/seed/wasm/800/500') center/cover;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .article-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: linear-gradient(180deg, transparent 50%, var(--deep-space) 100%);
+        }
+        .image-caption {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.3);
+            text-align: center;
+            margin-top: -1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .article-body h2 {
+            color: var(--vibrant-orange);
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+        }
+
+        .article-body h3 {
+            color: var(--warm-yellow);
+            font-size: 1.15rem;
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        .article-body p {
+            color: var(--off-white);
+            line-height: 1.9;
+            font-size: 1.05rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .article-body blockquote {
+            border-left: 3px solid var(--vibrant-orange);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            background: rgba(255,107,53,0.05);
+            border-radius: 0 12px 12px 0;
+            font-style: italic;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .article-body ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+        .article-body li {
+            color: var(--off-white);
+            line-height: 1.8;
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .article-body .highlight-box {
+            background: rgba(78,197,212,0.08);
+            border: 1px solid rgba(78,197,212,0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .highlight-box strong {
+            color: var(--light-blue);
+        }
+
+        .article-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+        .article-body th {
+            background: rgba(255,107,53,0.15);
+            color: var(--vibrant-orange);
+            padding: 0.8rem 1rem;
+            text-align: left;
+            font-weight: 700;
+            border-bottom: 2px solid var(--vibrant-orange);
+        }
+        .article-body td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            color: var(--off-white);
+        }
+        .article-body tr:last-child td {
+            border-bottom: none;
+        }
+        .article-body tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .share-section {
+            margin: 3rem 0;
+            padding: 2rem 0;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .share-section h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: rgba(255,255,255,0.5);
+        }
+        .share-buttons {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .share-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .share-btn.twitter { background: rgba(29,161,242,0.15); color: #1DA1F2; }
+        .share-btn.facebook { background: rgba(66,103,178,0.15); color: #4267B2; }
+        .share-btn.whatsapp { background: rgba(37,211,102,0.15); color: #25D366; }
+        .share-btn.copy { background: rgba(255,255,255,0.06); color: var(--off-white); }
+        .share-btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--vibrant-orange);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover { color: var(--warm-yellow); transform: translateX(-3px); }
+
+        footer {
+            position: relative;
+            z-index: 10;
+            padding: 2rem 5%;
+            text-align: center;
+            background: rgba(11,14,20,0.95);
+            color: rgba(255,255,255,0.3);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        footer a { color: var(--vibrant-orange); text-decoration: none; }
+        footer a:hover { color: var(--warm-yellow); }
+
+        @media (max-width: 768px) {
+            .article-image { height: 250px; }
+            .article-body p { font-size: 1rem; }
+            .article-body table { font-size: 0.8rem; }
+            .article-body th, .article-body td { padding: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    <div class="stars" id="stars"></div>
+
+    <header id="header">
+        <a href="index.html" class="logo">🚀 Espaço Tech</a>
+        <nav>
+            <a href="index.html">← Voltar ao Blog</a>
+        </nav>
+    </header>
+
+    <main class="article-container">
+        <a href="index.html" class="back-link">← Voltar ao blog</a>
+
+        <article>
+            <div class="article-header">
+                <span class="article-category">💻 Programação</span>
+                <h1>WebAssembly ultrapassa JavaScript em performance em novos benchmarks</h1>
+                <div class="article-meta">
+                    <span>📅 3 Maio 2026</span>
+                    <span>👁️ 5.1K visualizações</span>
+                    <span>⏱️ 6 min de leitura</span>
+                </div>
+            </div>
+
+            <div class="article-image"></div>
+            <div class="image-caption">Comparativo de performance entre WebAssembly e JavaScript. Fonte: Mozilla/BenchmarkGame</div>
+
+            <div class="article-body">
+                <p>O WebAssembly (Wasm) — a tecnologia que permite executar código compilado no navegador com velocidade quase nativa — acaba de atingir um marco histórico. Novos benchmarks divulgados pela equipe V8 (o motor JavaScript do Google Chrome) mostram que o Wasm supera o JavaScript em tarefas de CPU intensiva por uma margem de até 300%.</p>
+
+                <p>Os testes, realizados com a suíte de benchmarks <strong>BenchmarkGame</strong> e com a ferramenta interna <strong>V8 Octane</strong>, compararam a performance de algoritmos escritos em JavaScript puro e compilados para WebAssembly a partir de C, C++ e Rust. Em todas as categorias de processamento pesado, o Wasm saiu vitorioso.</p>
+
+                <blockquote>"WebAssembly não é mais o futuro — é o presente. O que estamos vendo é uma mudança de paradigma na plataforma web. Aplicações que antes eram exclusivas de desktop agora rodam no navegador com performance comparável", disse Ben Titzer, engenheiro líder da equipe V8 do Google.</blockquote>
+
+                <h2>⚡ Comparativo de performance</h2>
+
+                <p>A tabela abaixo mostra os resultados dos benchmarks mais recentes, comparando JavaScript (node.js v22 otimizado) com WebAssembly compilado a partir de Rust (versão 1.78). Os valores representam operações por segundo — quanto maior, melhor.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operação</th>
+                            <th>JavaScript</th>
+                            <th>WebAssembly</th>
+                            <th>Ganho</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ordenação de array (1M itens)</td>
+                            <td>4.200 ops/s</td>
+                            <td>12.800 ops/s</td>
+                            <td>+205%</td>
+                        </tr>
+                        <tr>
+                            <td>Processamento de imagem (Filtro Gaussiano)</td>
+                            <td>1.150 ops/s</td>
+                            <td>4.600 ops/s</td>
+                            <td>+300%</td>
+                        </tr>
+                        <tr>
+                            <td>Renderização 3D (triângulos/s)</td>
+                            <td>890 ops/s</td>
+                            <td>3.120 ops/s</td>
+                            <td>+250%</td>
+                        </tr>
+                        <tr>
+                            <td>Parsing de JSON (100MB)</td>
+                            <td>85 ops/s</td>
+                            <td>210 ops/s</td>
+                            <td>+147%</td>
+                        </tr>
+                        <tr>
+                            <td>Criptografia AES-256 (blocos/s)</td>
+                            <td>2.300 ops/s</td>
+                            <td>8.050 ops/s</td>
+                            <td>+250%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>🧠 Como o WebAssembly funciona?</h2>
+
+                <p>Diferente do JavaScript, que é interpretado e compilado em tempo real (JIT) pelo motor do navegador, o WebAssembly é um formato binário de baixo nível que o navegador executa diretamente. O fluxo típico é:</p>
+                <ul>
+                    <li>O desenvolvedor escreve o código em <strong>C, C++, Rust, Go</strong> ou outras linguagens compiláveis</li>
+                    <li>O código é compilado para <strong>bytecode Wasm</strong> (.wasm)</li>
+                    <li>O navegador carrega o bytecode e o traduz para <strong>código de máquina nativo</strong> em uma etapa única e eficiente</li>
+                    <li>O resultado é executado com velocidade <strong>próxima ao hardware</strong>, sem a sobrecarga de interpretação ou JIT</li>
+                </ul>
+
+                <p>"Enquanto o JavaScript precisa aquecer — compilar funções gradualmente conforme são usadas — o Wasm já carrega pronto. Para aplicações que realizam o mesmo cálculo milhões de vezes, essa diferença é dramática", explicou Titzer.</p>
+
+                <h2>🏢 Aplicações reais em produção</h2>
+
+                <p>Empresas líderes já adotaram o WebAssembly em produção para tarefas críticas de performance:</p>
+
+                <h3>✏️ Figma</h3>
+                <p>O editor de design colaborativo Figma reescreveu seu motor de renderização em WebAssembly (a partir de C++) em 2018, obtendo um ganho de performance de 3x no carregamento de arquivos complexos. Hoje, a empresa processa milhões de operações de renderização por segundo via Wasm.</p>
+
+                <h3>📐 AutoCAD Web</h3>
+                <p>A Autodesk portou seu software de engenharia AutoCAD para o navegador usando WebAssembly em 2020. O motor 2D/3D roda com performance virtualmente idêntica à versão desktop, permitindo que engenheiros trabalhem em projetos de grande escala diretamente do navegador.</p>
+
+                <h3>🎬 Editores de vídeo</h3>
+                <p>Plataformas como Clipchamp (Microsoft) e Kapwing utilizam Wasm para processamento de vídeo no lado do cliente, eliminando a necessidade de servidores caros para renderização. O codec de vídeo AV1 foi implementado em Wasm e roda a 60fps em hardware moderno.</p>
+
+                <div class="highlight-box">
+                    <strong>📊 WebAssembly em números (2026):</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li>97% dos navegadores suportam Wasm (Can I Use)</li>
+                        <li>+2 milhões de desenvolvedores usando Wasm em produção</li>
+                        <li>35 linguagens compiláveis para Wasm</li>
+                        <li>3.2× mais rápido que JS em CPUs single-thread</li>
+                        <li>Economia média de 60% em custos de servidor (offload para client-side)</li>
+                    </ul>
+                </div>
+
+                <h2>⚠️ Limitações atuais</h2>
+
+                <p>Apesar dos avanços impressionantes, o WebAssembly ainda possui limitações importantes:</p>
+                <ul>
+                    <li><strong>Acesso ao DOM:</strong> Wasm não pode manipular o DOM diretamente. Toda interação com a página HTML precisa passar por uma ponte JavaScript, o que introduz latência. Uma proposta chamada <strong>WebIDL Bindings</strong> promete resolver isso, mas ainda está em fase de especificação.</li>
+                    <li><strong>Tamanho dos binários:</strong> Arquivos .wasm podem ser grandes, especialmente quando incluem bibliotecas completas. O carregamento inicial pode ser lento, embora a compressão Brotli ajude significativamente.</li>
+                    <li><strong>Debugging limitado:</strong> Ferramentas de debug para Wasm são menos maduras que as do JavaScript. O suporte a breakpoints e inspeção de variáveis melhorou, mas ainda não está no mesmo nível.</li>
+                    <li><strong>Suporte a garbage collection (GC):</strong> Linguagens com GC (Java, C#, Kotlin) têm suporte experimental, mas ainda não são totalmente suportadas no Wasm — algo que a proposta <strong>Wasm GC</strong> promete resolver.</li>
+                </ul>
+
+                <h2>🔭 O futuro do WebAssembly</h2>
+
+                <p>O ritmo de desenvolvimento do WebAssembly está acelerando. As principais novidades no horizonte incluem:</p>
+
+                <h3>🧹 Wasm GC (Garbage Collection)</h3>
+                <p>A extensão que permitirá que linguagens gerenciadas (C#, Kotlin, Java, Dart, Swift) compilem diretamente para Wasm com suporte nativo a coleta de lixo. Já implementada no Chrome e Firefox experimentalmente, a proposta está em fase final de padronização no W3C. Isso abrirá o Wasm para centenas de milhares de desenvolvedores dessas linguagens.</p>
+
+                <h3>🧵 Suporte a threads</h3>
+                <p>O Wasm já possui suporte experimental a threads (Web Workers), permitindo computação paralela no navegador. Aplicações de visão computacional e machine learning serão as maiores beneficiadas — imagine rodar TensorFlow Lite diretamente no navegador com performance de desktop.</p>
+
+                <h3>🌐 WASI (WebAssembly System Interface)</h3>
+                <p>A WASI está transformando o Wasm em uma plataforma server-side. Startups como a Fermyon e a Fastly oferecem soluções de serverless baseadas em Wasm, que prometem inicialização 10× mais rápida que contêineres Docker. Com a WASI, o Wasm pode acessar sistema de arquivos, rede e outros recursos do sistema operacional.</p>
+
+                <h2>👨‍💻 Impacto na carreira de desenvolvedores web</h2>
+
+                <p>A ascensão do WebAssembly não significa o fim do JavaScript. Na verdade, as duas tecnologias são complementares. O JavaScript continua sendo a melhor escolha para interação com o DOM, lógica de UI, eventos e comunicação com servidores. O Wasm é ideal para tarefas computacionalmente intensivas.</p>
+
+                <p>Para desenvolvedores web, o recado é claro: aprender uma linguagem compilável para Wasm — especialmente <strong>Rust</strong> — tornou-se um diferencial competitivo significativo. O Rust, em particular, ganhou tração como a linguagem preferida para Wasm devido à sua segurança de memória e desempenho excepcional.</p>
+
+                <p>"O desenvolvedor web do futuro não será apenas um especialista em JavaScript. Ele será um poliglota que sabe quando usar JS para UI e quando usar Wasm (Rust/C++) para computação pesada. As fronteiras entre desenvolvimento web e engenharia de software estão se dissolvendo", concluiu Titzer.</p>
+
+                <p>Os benchmarks completos e o código-fonte dos testes estão disponíveis no repositório oficial da equipe V8 no GitHub.</p>
+            </div>
+        </article>
+
+        <div class="share-section">
+            <h3>📢 Compartilhe este artigo</h3>
+            <div class="share-buttons">
+                <a href="#" class="share-btn twitter" onclick="window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.title)+'%20'+encodeURIComponent(window.location.href),'_blank')">🐦 Twitter</a>
+                <a href="#" class="share-btn facebook" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href),'_blank')">📘 Facebook</a>
+                <a href="#" class="share-btn whatsapp" onclick="window.open('https://wa.me/?text='+encodeURIComponent(document.title+' - '+window.location.href),'_blank')">💬 WhatsApp</a>
+                <a href="#" class="share-btn copy" onclick="navigator.clipboard.writeText(window.location.href);alert('Link copiado!')">📋 Copiar link</a>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-link">← Voltar para o blog</a>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Espaço Tech | <a href="privacidade.html">Privacidade</a> | <a href="termos.html">Termos</a></p>
+    </footer>
+
+    <script>
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            const size = Math.random() * 2.5 + 0.5;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.setProperty('--duration', (Math.random() * 3 + 1) + 's');
+            starsContainer.appendChild(star);
+        }
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            document.getElementById('scrollProgress').style.width = (scrollTop / docHeight) * 100 + '%';
+            document.getElementById('header').classList.toggle('scrolled', scrollTop > 50);
+        });
+    </script>
+</body>
+</html>
