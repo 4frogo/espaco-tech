@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Espaço Tech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0B0E14;
+            --surface: #151A24;
+            --surface2: #1E2533;
+            --orange: #FF6B35;
+            --yellow: #FFB347;
+            --green: #4CAF50;
+            --red: #EF4444;
+            --text: #F5F5F5;
+            --text2: rgba(255,255,255,0.5);
+            --radius: 12px;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Login */
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .login-box {
+            background: var(--surface);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-box h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .login-box h1 span { color: var(--orange); }
+        .login-box p { color: var(--text2); font-size: 0.85rem; margin-bottom: 2rem; }
+        .login-box input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--bg);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .login-box input:focus { border-color: var(--orange); }
+        .login-box .btn {
+            width: 100%;
+            padding: 0.9rem;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--orange), var(--yellow));
+            color: var(--text);
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .login-box .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,107,53,0.3); }
+        .login-error { color: var(--red); font-size: 0.85rem; margin-top: 0.5rem; display: none; }
+
+        /* Admin layout */
+        .admin-screen { display: none; }
+        .admin-header {
+            background: var(--surface);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .admin-header .logo { font-weight: 700; font-size: 1.2rem; color: var(--orange); }
+        .admin-header .header-actions { display: flex; gap: 1rem; align-items: center; }
+        .admin-header .header-actions span { font-size: 0.85rem; color: var(--text2); }
+        .admin-header .logout-btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: transparent;
+            color: var(--text2);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+        .admin-header .logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+        .admin-body {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            background: var(--surface);
+            border-right: 1px solid rgba(255,255,255,0.06);
+            padding: 1.5rem 0;
+        }
+        .admin-sidebar .nav-item {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            color: var(--text2);
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .admin-sidebar .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+        .admin-sidebar .nav-item.active {
+            color: var(--orange);
+            border-left-color: var(--orange);
+            background: rgba(255,107,53,0.08);
+        }
+
+        /* Content */
+        .admin-content {
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: calc(100vh - 60px);
+        }
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .page-header h2 { font-size: 1.5rem; }
+        .page-header h2 span { color: var(--orange); }
+
+        .btn-primary {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--orange), var(--yellow));
+            color: var(--text);
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255,107,53,0.3); }
+        .btn-sm {
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .btn-edit { background: rgba(78,197,212,0.15); color: #4EC5D4; }
+        .btn-edit:hover { background: rgba(78,197,212,0.3); }
+        .btn-delete { background: rgba(239,68,68,0.15); color: var(--red); }
+        .btn-delete:hover { background: rgba(239,68,68,0.3); }
+        .btn-view { background: rgba(255,255,255,0.06); color: var(--text2); }
+        .btn-view:hover { background: rgba(255,255,255,0.12); }
+
+        /* Article table */
+        .table-wrap {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.06);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: left;
+            padding: 1rem 1.2rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text2);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-weight: 600;
+        }
+        td {
+            padding: 0.9rem 1.2rem;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            vertical-align: middle;
+        }
+        tr:last-child td { border: none; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .td-actions { display: flex; gap: 0.4rem; }
+        .cat-badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 1.5rem;
+        }
+        .stat-card .num {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--orange);
+        }
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--text2);
+            margin-top: 0.3rem;
+        }
+
+        /* Editor */
+        .editor-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .editor-form {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 1.5rem;
+        }
+        .editor-form .field {
+            margin-bottom: 1rem;
+        }
+        .editor-form label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text2);
+            margin-bottom: 0.4rem;
+        }
+        .editor-form input, .editor-form select, .editor-form textarea {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: var(--bg);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+        .editor-form input:focus, .editor-form select:focus, .editor-form textarea:focus {
+            border-color: var(--orange);
+        }
+        .editor-form textarea {
+            min-height: 200px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+        .editor-form .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .editor-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .btn-secondary {
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: transparent;
+            color: var(--text2);
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover { border-color: var(--text2); color: var(--text); }
+
+        /* Preview */
+        .preview-pane {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.06);
+            overflow: hidden;
+            position: sticky;
+            top: 2rem;
+        }
+        .preview-pane .preview-header {
+            padding: 0.8rem 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text2);
+            background: var(--surface2);
+        }
+        .preview-pane .preview-body {
+            padding: 1.5rem;
+            min-height: 400px;
+        }
+        .preview-pane .preview-body h2 { color: var(--orange); font-size: 1.2rem; margin-bottom: 0.8rem; }
+        .preview-pane .preview-body p { color: var(--text2); line-height: 1.6; font-size: 0.9rem; margin-bottom: 0.6rem; }
+        .preview-pane .preview-body .placeholder {
+            color: var(--text2);
+            opacity: 0.4;
+            font-style: italic;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 999;
+            animation: slideIn 0.3s ease;
+            display: none;
+        }
+        .toast.show { display: block; }
+        .toast.success { background: var(--green); color: var(--text); }
+        .toast.error { background: var(--red); color: var(--text); }
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text2);
+        }
+        .empty-state h3 { margin-bottom: 0.5rem; }
+
+        @media (max-width: 768px) {
+            .admin-body { grid-template-columns: 1fr; }
+            .admin-sidebar { display: none; }
+            .editor-layout { grid-template-columns: 1fr; }
+            .admin-content { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-screen" id="loginScreen">
+    <div class="login-box">
+        <h1><span>Espaço</span> Tech</h1>
+        <p>Área administrativa</p>
+        <input type="password" id="loginPass" placeholder="Senha" onkeydown="if(event.key==='Enter') login()">
+        <button class="btn" onclick="login()">Entrar</button>
+        <div class="login-error" id="loginError">Senha incorreta</div>
+    </div>
+</div>
+
+<div class="admin-screen" id="adminScreen">
+    <div class="admin-header">
+        <div class="logo">Espaço Tech <span style="font-weight:300;color:rgba(255,255,255,0.3);font-size:0.8rem">| Admin</span></div>
+        <div class="header-actions">
+            <span id="articleCount">0 artigos</span>
+            <button class="logout-btn" onclick="logout()">Sair</button>
+        </div>
+    </div>
+    <div class="admin-body">
+        <nav class="admin-sidebar">
+            <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">📊 Dashboard</div>
+            <div class="nav-item" data-page="articles" onclick="switchPage('articles')">📝 Artigos</div>
+            <div class="nav-item" data-page="editor" onclick="switchPage('editor')">✏️ Editor</div>
+            <div class="nav-item" data-page="settings" onclick="switchPage('settings')">⚙️ Config</div>
+            <div class="nav-item" onclick="window.open('index.html','_blank')">🔗 Ver Site</div>
+        </nav>
+
+        <div class="admin-content">
+
+            <!-- Dashboard -->
+            <div class="page active" id="page-dashboard">
+                <div class="page-header"><h2>📊 <span>Dashboard</span></h2></div>
+                <div class="stats-grid" id="statsGrid"></div>
+                <div class="table-wrap">
+                    <table><thead><tr><th>Artigo</th><th>Categoria</th><th>Data</th><th>Ações</th></tr></thead>
+                    <tbody id="recentTable"></tbody></table>
+                </div>
+            </div>
+
+            <!-- Articles -->
+            <div class="page" id="page-articles">
+                <div class="page-header">
+                    <h2>📝 <span>Artigos</span></h2>
+                    <button class="btn-primary" onclick="newArticle()">+ Novo Artigo</button>
+                </div>
+                <div class="table-wrap">
+                    <table><thead><tr><th>Título</th><th>Categoria</th><th>Arquivo</th><th>Data</th><th>Ações</th></tr></thead>
+                    <tbody id="articleTable"></tbody></table>
+                </div>
+            </div>
+
+            <!-- Editor -->
+            <div class="page" id="page-editor">
+                <div class="page-header"><h2>✏️ <span>Editor</span></h2></div>
+                <div class="editor-layout">
+                    <div class="editor-form">
+                        <div class="field-row">
+                            <div class="field">
+                                <label>Título do Artigo</label>
+                                <input type="text" id="edTitle" placeholder="Título">
+                            </div>
+                            <div class="field">
+                                <label>Slug (nome do arquivo)</label>
+                                <input type="text" id="edSlug" placeholder="meu-artigo">
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field">
+                                <label>Categoria</label>
+                                <select id="edCat">
+                                    <option value="Tecnologia">Tecnologia</option>
+                                    <option value="Ciência">Ciência</option>
+                                    <option value="Espaço">Espaço</option>
+                                    <option value="Programação">Programação</option>
+                                    <option value="Notícias">Notícias</option>
+                                    <option value="Gadgets">Gadgets</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label>Data</label>
+                                <input type="date" id="edDate">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>URL da Imagem de capa</label>
+                            <input type="text" id="edImage" placeholder="https://picsum.photos/seed/.../800/500">
+                        </div>
+                        <div class="field">
+                            <label>Descrição curta (meta + preview)</label>
+                            <textarea id="edDesc" rows="2" placeholder="Descrição curta do artigo..."></textarea>
+                        </div>
+                        <div class="field">
+                            <label>Conteúdo HTML</label>
+                            <textarea id="edContent" placeholder="<h2>Título da seção</h2><p>Parágrafo...</p>"></textarea>
+                        </div>
+                        <div class="editor-actions">
+                            <button class="btn-primary" onclick="saveArticle()">💾 Salvar</button>
+                            <button class="btn-secondary" onclick="previewArticle()">👁️ Preview</button>
+                            <button class="btn-secondary" onclick="exportArticle()">📄 Exportar HTML</button>
+                            <button class="btn-secondary" onclick="newArticle()" style="margin-left:auto">+ Novo</button>
+                        </div>
+                    </div>
+                    <div class="preview-pane">
+                        <div class="preview-header">Preview</div>
+                        <div class="preview-body" id="previewBody">
+                            <div class="placeholder">Preencha os campos e clique em "Preview"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings -->
+            <div class="page" id="page-settings">
+                <div class="page-header"><h2>⚙️ <span>Configurações</span></h2></div>
+                <div class="editor-form" style="max-width:600px">
+                    <div class="field">
+                        <label>Senha do Admin</label>
+                        <input type="text" id="setPass" placeholder="Nova senha">
+                    </div>
+                    <div class="field">
+                        <label>Autor padrão</label>
+                        <input type="text" id="setAuthor" placeholder="Espaço Tech">
+                    </div>
+                    <div class="field">
+                        <label>Exportar dados</label>
+                        <button class="btn-primary" onclick="exportData()">📦 Exportar JSON</button>
+                        <button class="btn-secondary" style="margin-left:0.5rem" onclick="importData()">📥 Importar JSON</button>
+                        <input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImport(event)">
+                    </div>
+                    <div class="field">
+                        <label>Ações</label>
+                        <button class="btn-secondary" onclick="resetData()" style="color:var(--red);border-color:var(--red)">🔄 Resetar dados</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    const PASSWORD = 'admin123';
+    const STORAGE_KEY = 'espacotech_articles';
+
+    // Default articles
+    const DEFAULT_ARTICLES = [
+        { id: 1, title: "James Webb revela detalhes inéditos de exoplaneta com atmosfera de vapor d'água", slug: "artigo", cat: "Espaço", date: "2026-05-12", image: "https://picsum.photos/seed/jameswebb/800/500", desc: "O telescópio espacial James Webb acaba de fazer uma descoberta impressionante: um exoplaneta a 120 anos-luz da Terra possui uma atmosfera rica em vapor d'água.", file: "artigo.html", content: '' },
+        { id: 2, title: "Nova IA da Google consegue prever falhas em servidores com 95% de precisão", slug: "artigo2", cat: "Tecnologia", date: "2026-05-11", image: "https://picsum.photos/seed/google-ai/800/500", desc: "Modelo de machine learning promete revolucionar a manutenção preditiva em data centers.", file: "artigo2.html", content: '' },
+        { id: 3, title: "Cientistas brasileiros desenvolvem bateria que carrega em 30 segundos", slug: "artigo3", cat: "Ciência", date: "2026-05-10", image: "https://picsum.photos/seed/bateria-grafeno/800/500", desc: "Nova tecnologia utiliza grafeno e promete mudar o mercado de dispositivos móveis.", file: "artigo3.html", content: '' },
+        { id: 4, title: "SpaceX anuncia missão tripulada para Marte em 2030", slug: "artigo4", cat: "Espaço", date: "2026-05-09", image: "https://picsum.photos/seed/spacex-marte/800/500", desc: "Elon Musk revela detalhes do cronograma para a primeira viagem interplanetária da humanidade.", file: "artigo4.html", content: '' },
+        { id: 5, title: "Rust é eleita a linguagem mais amada pelos desenvolvedores pelo 5º ano consecutivo", slug: "artigo5", cat: "Programação", date: "2026-05-08", image: "https://picsum.photos/seed/rust-lang/800/500", desc: "Pesquisa do Stack Overflow revela tendências e preferências do mercado de desenvolvimento.", file: "artigo5.html", content: '' },
+        { id: 6, title: "Brasil lança primeiro satélite 100% nacional de observação climática", slug: "artigo6", cat: "Notícias", date: "2026-05-07", image: "https://picsum.photos/seed/amazonia-satelite/800/500", desc: "Satélite Amazonia-2 vai monitorar desmatamento e mudanças climáticas em tempo real.", file: "artigo6.html", content: '' },
+        { id: 7, title: "Smartphone com tela que se autorrepara chega ao mercado em 2027", slug: "artigo7", cat: "Gadgets", date: "2026-05-06", image: "https://picsum.photos/seed/self-healing/800/500", desc: "Novo display com polímeros inteligentes promete acabar com arranhões e rachaduras.", file: "artigo7.html", content: '' },
+        { id: 8, title: "Terapia genética cura doença rara em pacientes brasileiros", slug: "artigo8", cat: "Ciência", date: "2026-05-05", image: "https://picsum.photos/seed/genetica-usp/800/500", desc: "Resultados históricos do estudo da USP abrem nova fronteira para a medicina personalizada.", file: "artigo8.html", content: '' },
+        { id: 9, title: "Astrônomos detectam sinal de rádio misterioso vindo de galáxia vizinha", slug: "artigo9", cat: "Espaço", date: "2026-05-04", image: "https://picsum.photos/seed/sinal-radio/800/500", desc: "Sinal se repete a cada 16 dias e ainda não tem explicação científica definitiva.", file: "artigo9.html", content: '' },
+        { id: 10, title: "WebAssembly ultrapassa JavaScript em performance em novos benchmarks", slug: "artigo10", cat: "Programação", date: "2026-05-03", image: "https://picsum.photos/seed/wasm/800/500", desc: "Tecnologia que permite rodar código compilado no navegador está cada vez mais rápida.", file: "artigo10.html", content: '' }
+    ];
+
+    const CAT_COLORS = {
+        'Tecnologia': '#4EC5D4',
+        'Ciência': '#8B5FBF',
+        'Espaço': '#FFB347',
+        'Programação': '#4CAF50',
+        'Notícias': '#FF6B35',
+        'Gadgets': '#4EC5D4'
+    };
+
+    let articles = [];
+    let editingId = null;
+
+    function getArticles() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            try { return JSON.parse(stored); } catch(e) {}
+        }
+        return JSON.parse(JSON.stringify(DEFAULT_ARTICLES));
+    }
+
+    function saveArticles() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(articles));
+        document.getElementById('articleCount').textContent = articles.length + ' artigos';
+    }
+
+    function login() {
+        const pass = document.getElementById('loginPass').value;
+        if (pass === PASSWORD) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminScreen').style.display = 'block';
+            initAdmin();
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+            document.getElementById('loginPass').value = '';
+            document.getElementById('loginPass').focus();
+        }
+    }
+
+    function logout() {
+        document.getElementById('adminScreen').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('loginPass').value = '';
+        document.getElementById('loginError').style.display = 'none';
+    }
+
+    function switchPage(name) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('page-' + name).classList.add('active');
+        document.querySelector('.nav-item[data-page="' + name + '"]').classList.add('active');
+        if (name === 'dashboard') renderDashboard();
+        if (name === 'articles') renderArticles();
+    }
+
+    function showToast(msg, type) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast show ' + type;
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function initAdmin() {
+        articles = getArticles();
+        saveArticles();
+        renderDashboard();
+    }
+
+    // Dashboard
+    function renderDashboard() {
+        articles = getArticles();
+        const cats = {};
+        articles.forEach(a => { cats[a.cat] = (cats[a.cat] || 0) + 1; });
+        document.getElementById('statsGrid').innerHTML =
+            '<div class="stat-card"><div class="num">' + articles.length + '</div><div class="label">Total de Artigos</div></div>' +
+            Object.entries(cats).map(([k,v]) => '<div class="stat-card"><div class="num" style="color:' + (CAT_COLORS[k]||'var(--orange)') + '">' + v + '</div><div class="label">' + k + '</div></div>').join('');
+
+        const recent = articles.slice(-5).reverse();
+        document.getElementById('recentTable').innerHTML = recent.map(a =>
+            '<tr><td style="font-weight:600">' + a.title + '</td><td><span class="cat-badge" style="background:' + (CAT_COLORS[a.cat]||'') + '22;color:' + (CAT_COLORS[a.cat]||'var(--orange)') + '">' + a.cat + '</span></td><td style="color:var(--text2)">' + formatDate(a.date) + '</td><td class="td-actions"><button class="btn-sm btn-edit" onclick="editArticle(' + a.id + ')">Editar</button><button class="btn-sm btn-view" onclick="window.open(\'' + a.file + '\',\'_\')">Ver</button></td></tr>'
+        ).join('');
+    }
+
+    // Articles list
+    function renderArticles() {
+        articles = getArticles();
+        document.getElementById('articleTable').innerHTML = articles.length === 0
+            ? '<tr><td colspan="5"><div class="empty-state"><h3>Nenhum artigo</h3><p>Crie seu primeiro artigo</p></div></td></tr>'
+            : articles.map(a =>
+                '<tr><td style="font-weight:600;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + a.title + '</td>' +
+                '<td><span class="cat-badge" style="background:' + (CAT_COLORS[a.cat]||'') + '22;color:' + (CAT_COLORS[a.cat]||'var(--orange)') + '">' + a.cat + '</span></td>' +
+                '<td style="color:var(--text2);font-size:0.8rem">' + a.file + '</td>' +
+                '<td style="color:var(--text2)">' + formatDate(a.date) + '</td>' +
+                '<td class="td-actions">' +
+                '<button class="btn-sm btn-edit" onclick="editArticle(' + a.id + ')">✏️</button>' +
+                '<button class="btn-sm btn-view" onclick="window.open(\'' + a.file + '\',\'_\')">🔗</button>' +
+                '<button class="btn-sm btn-delete" onclick="deleteArticle(' + a.id + ')">🗑️</button></td></tr>'
+            ).join('');
+    }
+
+    function formatDate(d) {
+        if (!d) return '';
+        const p = d.split('-');
+        const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        return parseInt(p[2]) + ' ' + meses[parseInt(p[1])-1] + ' ' + p[0];
+    }
+
+    function newArticle() {
+        editingId = null;
+        document.getElementById('edTitle').value = '';
+        document.getElementById('edSlug').value = '';
+        document.getElementById('edCat').value = 'Tecnologia';
+        document.getElementById('edDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('edImage').value = '';
+        document.getElementById('edDesc').value = '';
+        document.getElementById('edContent').value = '';
+        document.getElementById('previewBody').innerHTML = '<div class="placeholder">Preencha os campos e clique em "Preview"</div>';
+        switchPage('editor');
+    }
+
+    function editArticle(id) {
+        const a = articles.find(x => x.id === id);
+        if (!a) return;
+        editingId = id;
+        document.getElementById('edTitle').value = a.title;
+        document.getElementById('edSlug').value = a.slug;
+        document.getElementById('edCat').value = a.cat;
+        document.getElementById('edDate').value = a.date;
+        document.getElementById('edImage').value = a.image;
+        document.getElementById('edDesc').value = a.desc;
+        document.getElementById('edContent').value = a.content || '';
+        previewArticle();
+        switchPage('editor');
+    }
+
+    function saveArticle() {
+        const title = document.getElementById('edTitle').value.trim();
+        const slug = document.getElementById('edSlug').value.trim();
+        const cat = document.getElementById('edCat').value;
+        const date = document.getElementById('edDate').value;
+        const image = document.getElementById('edImage').value.trim();
+        const desc = document.getElementById('edDesc').value.trim();
+        const content = document.getElementById('edContent').value.trim();
+
+        if (!title || !slug) { showToast('Preencha título e slug', 'error'); return; }
+
+        articles = getArticles();
+
+        if (editingId) {
+            const idx = articles.findIndex(x => x.id === editingId);
+            if (idx === -1) return;
+            articles[idx] = { ...articles[idx], title, slug, cat, date, image, desc, content };
+            showToast('Artigo atualizado!', 'success');
+        } else {
+            const newId = Math.max(...articles.map(a => a.id), 0) + 1;
+            const file = slug + '.html';
+            articles.push({ id: newId, title, slug, cat, date, image, desc, content, file });
+            showToast('Artigo criado! Exporte o HTML.', 'success');
+            editingId = newId;
+        }
+
+        saveArticles();
+        renderArticles();
+    }
+
+    function deleteArticle(id) {
+        if (!confirm('Excluir este artigo?')) return;
+        articles = getArticles();
+        articles = articles.filter(a => a.id !== id);
+        saveArticles();
+        renderArticles();
+        showToast('Artigo excluído', 'success');
+    }
+
+    function previewArticle() {
+        const title = document.getElementById('edTitle').value.trim() || 'Título do Artigo';
+        const cat = document.getElementById('edCat').value;
+        const date = document.getElementById('edDate').value;
+        const image = document.getElementById('edImage').value.trim() || 'https://picsum.photos/seed/placeholder/800/500';
+        const desc = document.getElementById('edDesc').value.trim() || 'Descrição do artigo...';
+        const content = document.getElementById('edContent').value.trim() || '<p class="placeholder">Conteúdo do artigo...</p>';
+
+        const color = CAT_COLORS[cat] || 'var(--orange)';
+        document.getElementById('previewBody').innerHTML =
+            '<span style="display:inline-block;padding:0.2rem 0.7rem;border-radius:50px;font-size:0.7rem;font-weight:700;background:' + color + '22;color:' + color + ';margin-bottom:0.8rem">' + cat + '</span>' +
+            '<h2 style="font-size:1.4rem;margin-bottom:0.5rem;background:linear-gradient(135deg,var(--orange),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent">' + title + '</h2>' +
+            '<div style="font-size:0.75rem;color:var(--text2);margin-bottom:1rem">' + formatDate(date) + '</div>' +
+            '<div style="height:150px;border-radius:12px;background:url(' + image + ') center/cover;margin-bottom:1rem"></div>' +
+            '<p style="color:var(--text);line-height:1.7;font-size:0.9rem;margin-bottom:0.8rem">' + desc + '</p>' +
+            '<div style="color:var(--text2);line-height:1.7;font-size:0.85rem">' + content + '</div>';
+    }
+
+    function exportArticle() {
+        const title = document.getElementById('edTitle').value.trim() || 'titulo';
+        const slug = document.getElementById('edSlug').value.trim() || 'artigo';
+        const cat = document.getElementById('edCat').value;
+        const date = document.getElementById('edDate').value || new Date().toISOString().split('T')[0];
+        const image = document.getElementById('edImage').value.trim() || 'https://picsum.photos/seed/default/800/500';
+        const desc = document.getElementById('edDesc').value.trim() || '';
+        const content = document.getElementById('edContent').value.trim() || '';
+        const dateDisplay = formatDate(date);
+
+        const html = '<!DOCTYPE html>\n<html lang="pt-BR">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>' + title + ' - Espaço Tech</title>\n    <meta name="description" content="' + desc + '">\n    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">\n    <style>\n        * { margin: 0; padding: 0; box-sizing: border-box; }\n        :root {\n            --deep-space: #0B0E14;\n            --space-blue: #1A1F2E;\n            --vibrant-orange: #FF6B35;\n            --warm-yellow: #FFB347;\n            --white: #FFFFFF;\n            --off-white: #F5F5F5;\n            --card-bg: rgba(255,255,255,0.04);\n        }\n        html { scroll-behavior: smooth; }\n        body {\n            font-family: \'Montserrat\', sans-serif;\n            background: var(--deep-space);\n            color: var(--white);\n        }\n        .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }\n        .star { position: absolute; background: var(--white); border-radius: 50%; animation: twinkle var(--duration) ease-in-out infinite; }\n        @keyframes twinkle { 0%,100% { opacity: 0.2; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.3); } }\n        .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--vibrant-orange), var(--warm-yellow)); z-index: 1000; width: 0%; }\n        header {\n            position: fixed; top: 0; left: 0; right: 0; z-index: 50;\n            padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center;\n            backdrop-filter: blur(12px); background: rgba(11,14,20,0.6);\n            transition: all 0.3s ease;\n        }\n        header.scrolled { padding: 0.6rem 5%; background: rgba(11,14,20,0.95); }\n        .logo { display: flex; align-items: center; transition: all 0.3s ease; flex-shrink: 0; }\n        .logo:hover { transform: scale(1.03); filter: drop-shadow(0 0 12px rgba(255,107,53,0.5)); }\n        .logo img { display: block; }\n        nav a { color: var(--white); text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: color 0.3s ease; }\n        nav a:hover { color: var(--vibrant-orange); }\n        .article-container { max-width: 800px; margin: 0 auto; padding: 8rem 5% 3rem; position: relative; z-index: 10; }\n        .article-header { margin-bottom: 2rem; }\n        .article-category {\n            display: inline-block; padding: 0.25rem 0.8rem; border-radius: 50px;\n            font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;\n            background: rgba(255,179,71,0.2); color: var(--warm-yellow); margin-bottom: 1rem;\n        }\n        .article-header h1 {\n            font-size: clamp(1.8rem, 4vw, 2.8rem); line-height: 1.2; margin-bottom: 1rem;\n            background: linear-gradient(135deg, var(--vibrant-orange), var(--warm-yellow));\n            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;\n        }\n        .article-meta { display: flex; gap: 1.5rem; font-size: 0.85rem; color: rgba(255,255,255,0.4); margin-bottom: 1.5rem; flex-wrap: wrap; }\n        .article-image { width: 100%; height: 400px; background: url(\'' + image + '\') center/cover; border-radius: 20px; margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.06); }\n        .image-caption { font-size: 0.8rem; color: rgba(255,255,255,0.3); text-align: center; margin-top: -1.5rem; margin-bottom: 2rem; }\n        .article-body h2 { color: var(--vibrant-orange); font-size: 1.5rem; margin: 2rem 0 1rem; }\n        .article-body h3 { color: var(--warm-yellow); font-size: 1.15rem; margin: 1.5rem 0 0.8rem; }\n        .article-body p { color: var(--off-white); line-height: 1.9; font-size: 1.05rem; margin-bottom: 1.2rem; }\n        .article-body blockquote { border-left: 3px solid var(--vibrant-orange); padding: 1rem 1.5rem; margin: 1.5rem 0; background: rgba(255,107,53,0.05); border-radius: 0 12px 12px 0; font-style: italic; color: rgba(255,255,255,0.7); }\n        .article-body ul { padding-left: 1.5rem; margin-bottom: 1.2rem; }\n        .article-body li { color: var(--off-white); line-height: 1.8; font-size: 1.05rem; margin-bottom: 0.5rem; }\n        .article-body .highlight-box { background: rgba(78,197,212,0.08); border: 1px solid rgba(78,197,212,0.2); border-radius: 16px; padding: 1.5rem; margin: 1.5rem 0; }\n        .highlight-box strong { color: #4EC5D4; }\n        .share-section { margin: 3rem 0; padding: 2rem 0; border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); }\n        .share-buttons { display: flex; gap: 0.8rem; flex-wrap: wrap; }\n        .share-btn { padding: 0.6rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.3s ease; }\n        .share-btn:hover { transform: translateY(-2px); filter: brightness(1.2); }\n        .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--vibrant-orange); text-decoration: none; font-weight: 600; font-size: 0.9rem; margin-bottom: 2rem; transition: all 0.3s ease; }\n        .back-link:hover { color: var(--warm-yellow); transform: translateX(-3px); }\n        footer { position: relative; z-index: 10; padding: 2rem 5%; text-align: center; background: rgba(11,14,20,0.95); color: rgba(255,255,255,0.3); font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.05); }\n        footer a { color: var(--vibrant-orange); text-decoration: none; }\n        @media (max-width: 768px) { .article-image { height: 250px; } }\n    </style>\n</head>\n<body>\n    <div class="scroll-progress" id="scrollProgress"></div>\n    <div class="stars" id="stars"></div>\n    <header id="header">\n        <a href="index.html" class="logo"><img src="logo.svg" alt="Espaço Tech" height="42"></a>\n        <nav><a href="index.html">← Voltar ao Blog</a></nav>\n    </header>\n    <main class="article-container">\n        <a href="index.html" class="back-link">← Voltar ao blog</a>\n        <article>\n            <div class="article-header">\n                <span class="article-category">🌌 ' + cat + '</span>\n                <h1>' + title + '</h1>\n                <div class="article-meta"><span>📅 ' + dateDisplay + '</span></div>\n            </div>\n            <div class="article-image"></div>\n            <div class="image-caption">Imagem ilustrativa</div>\n            <div class="article-body">\n                ' + (content || '<p>' + desc + '</p>') + '\n            </div>\n        </article>\n        <a href="index.html" class="back-link">← Voltar para o blog</a>\n    </main>\n    <footer><p>&copy; 2026 Espaço Tech | <a href="privacidade.html">Privacidade</a> | <a href="termos.html">Termos</a></p></footer>\n    <script>\n        const c = document.getElementById(\'stars\');\n        for (let i = 0; i < 80; i++) {\n            const s = document.createElement(\'div\'); s.className = \'star\';\n            s.style.left = Math.random()*100+\'%\'; s.style.top = Math.random()*100+\'%\';\n            s.style.width = s.style.height = (Math.random()*2.5+0.5)+\'px\';\n            s.style.setProperty(\'--duration\', (Math.random()*3+1)+\'s\');\n            c.appendChild(s);\n        }\n        window.addEventListener(\'scroll\', () => {\n            const st = window.scrollY, dh = document.documentElement.scrollHeight - window.innerHeight;\n            document.getElementById(\'scrollProgress\').style.width = (st/dh)*100+\'%\';\n            document.getElementById(\'header\').classList.toggle(\'scrolled\', st>50);\n        });\n    <\/script>\n</body>\n</html>';
+
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = slug + '.html';
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Arquivo ' + slug + '.html baixado!', 'success');
+    }
+
+    function exportData() {
+        const data = JSON.stringify(getArticles(), null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'espacotech-artigos.json';
+        a.click();
+        showToast('Dados exportados!', 'success');
+    }
+
+    function importData() {
+        document.getElementById('importFile').click();
+    }
+
+    function handleImport(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            try {
+                const data = JSON.parse(ev.target.result);
+                if (Array.isArray(data)) {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                    articles = data;
+                    saveArticles();
+                    renderArticles();
+                    showToast('Dados importados! ' + data.length + ' artigos', 'success');
+                } else {
+                    showToast('JSON inválido', 'error');
+                }
+            } catch(e) { showToast('Erro ao importar', 'error'); }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+    }
+
+    function resetData() {
+        if (!confirm('Resetar para os artigos padrão? Isso vai substituir TODOS os dados.')) return;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_ARTICLES));
+        articles = JSON.parse(JSON.stringify(DEFAULT_ARTICLES));
+        saveArticles();
+        renderArticles();
+        showToast('Dados resetados', 'success');
+    }
+
+    // Enter key on login
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') login();
+    });
+</script>
+</body>
+</html>
