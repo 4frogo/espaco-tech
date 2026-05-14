@@ -1086,6 +1086,175 @@
             .blog-grid { grid-template-columns: 1fr; }
         }
 
+        /* Skeleton loading */
+        @keyframes shimmer {
+            0% { background-position: -200px 0; }
+            100% { background-position: 200px 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        .skeleton-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            overflow: hidden;
+        }
+        .skeleton-card .sk-img {
+            height: 180px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+        .skeleton-card .sk-body {
+            padding: 1.5rem;
+        }
+        .skeleton-card .sk-tag {
+            width: 80px;
+            height: 22px;
+            border-radius: 50px;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+        .skeleton-card .sk-title {
+            width: 90%;
+            height: 20px;
+            border-radius: 6px;
+            margin-bottom: 0.6rem;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+        .skeleton-card .sk-title-short {
+            width: 65%;
+            height: 20px;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+        .skeleton-card .sk-line {
+            width: 100%;
+            height: 14px;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+        .skeleton-card .sk-line-short {
+            width: 55%;
+            height: 14px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+        body.loading .sk-el { display: block; }
+        body.loading .sk-el.skeleton-featured { display: grid; }
+        body.loading .featured-post,
+        body.loading .blog-card,
+        body.loading .sidebar > div:not(.sk-el),
+        body.loading .newsletter,
+        body.loading .ad-slot,
+        body.loading .category-cloud,
+        body.loading .pagination,
+        body.loading .section-title { display: none; }
+        .sk-el { display: none; }
+
+        .skeleton-featured {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            background: var(--card-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 3rem;
+        }
+        .skeleton-featured .sk-f-img {
+            min-height: 300px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+        .skeleton-featured .sk-f-body {
+            padding: 2rem 2rem 2rem 0;
+        }
+        .skeleton-featured .sk-f-tag {
+            width: 100px;
+            height: 26px;
+            border-radius: 50px;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+        .skeleton-featured .sk-f-title {
+            width: 85%;
+            height: 28px;
+            border-radius: 6px;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+        .skeleton-featured .sk-f-desc {
+            width: 100%;
+            height: 16px;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+
+        .skeleton-sidebar .sk-widget {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 1.5rem;
+        }
+        .skeleton-sidebar .sk-w-title {
+            width: 60%;
+            height: 18px;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+        .skeleton-sidebar .sk-w-line {
+            width: 100%;
+            height: 14px;
+            border-radius: 6px;
+            margin-bottom: 0.7rem;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+        .skeleton-sidebar .sk-w-line:last-child { width: 70%; }
+        .skeleton-sidebar .sk-ad {
+            height: 250px;
+            border-radius: 16px;
+            border: 1px dashed rgba(255,255,255,0.06);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+
+        .content-loaded .sk-el { display: none; }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
@@ -1172,6 +1341,18 @@
             <div class="black-hole"></div>
             <span class="fire-title">Destaque</span>
         </div>
+
+        <!-- Skeleton Featured -->
+        <div class="skeleton-featured featured-post sk-el" style="display:none">
+            <div class="sk-f-img"></div>
+            <div class="sk-f-body">
+                <div class="sk-f-tag"></div>
+                <div class="sk-f-title"></div>
+                <div class="sk-f-desc"></div>
+                <div class="sk-f-desc" style="width:75%"></div>
+            </div>
+        </div>
+
         <article class="featured-post section-reveal" id="noticias">
             <div class="featured-img" style="background-image: url('https://picsum.photos/seed/jameswebb/800/500'); background-size: cover; background-position: center;"></div>
             <div class="featured-body">
@@ -1193,6 +1374,16 @@
                     <span>📰</span> Últimas Notícias
                 </div>
                 <div class="blog-grid section-reveal">
+                    <!-- Skeleton cards -->
+                    <div class="sk-el" style="display:none">
+                        <div class="skeleton-card"><div class="sk-img"></div><div class="sk-body"><div class="sk-tag"></div><div class="sk-title"></div><div class="sk-line"></div><div class="sk-line-short"></div></div></div>
+                    </div>
+                    <div class="sk-el" style="display:none">
+                        <div class="skeleton-card"><div class="sk-img"></div><div class="sk-body"><div class="sk-tag"></div><div class="sk-title"></div><div class="sk-line"></div><div class="sk-line-short"></div></div></div>
+                    </div>
+                    <div class="sk-el" style="display:none">
+                        <div class="skeleton-card"><div class="sk-img"></div><div class="sk-body"><div class="sk-tag"></div><div class="sk-title"></div><div class="sk-line"></div><div class="sk-line-short"></div></div></div>
+                    </div>
                     <article class="blog-card" id="post1">
                         <div class="card-img" style="background-image: url('https://picsum.photos/seed/ia-google/400/250'); background-size: cover; background-position: center;"></div>
                         <div class="card-body">
@@ -1303,6 +1494,14 @@
 
             <!-- Sidebar -->
             <aside class="sidebar">
+                <!-- Skeleton sidebar -->
+                <div class="sk-el skeleton-sidebar" style="display:none">
+                    <div class="sk-ad"></div>
+                    <div class="sk-widget"><div class="sk-w-title"></div><div class="sk-w-line"></div><div class="sk-w-line"></div><div class="sk-w-line"></div></div>
+                    <div class="sk-widget"><div class="sk-w-title"></div><div class="sk-w-line"></div><div class="sk-w-line"></div><div class="sk-w-line"></div><div class="sk-w-line"></div><div class="sk-w-line"></div></div>
+                    <div class="sk-ad"></div>
+                    <div class="sk-widget"><div class="sk-w-title"></div><div class="sk-w-line"></div><div class="sk-w-line"></div><div class="sk-w-line"></div><div class="sk-w-line"></div><div class="sk-w-line"></div></div>
+                </div>
                 <div class="sidebar-ad section-reveal">
                     ANÚNCIO 300x250
                 </div>
@@ -1580,6 +1779,22 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeSearch();
         });
+
+        // Skeleton loading
+        (function() {
+            const shown = sessionStorage.getItem('sk_shown');
+            const hasSkeletons = document.querySelectorAll('.sk-el').length > 0;
+            if (!hasSkeletons) return;
+
+            if (shown) return;
+
+            document.body.classList.add('loading');
+
+            setTimeout(() => {
+                document.body.classList.remove('loading');
+                sessionStorage.setItem('sk_shown', '1');
+            }, 800);
+        })();
 
         // Section reveal
         const observer = new IntersectionObserver((entries) => {
