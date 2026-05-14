@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" width="200" height="50">
+  <defs>
+    <linearGradient id="logograd" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF6B35"/>
+      <stop offset="100%" stop-color="#FFB347"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#FF6B35"/>
+      <stop offset="100%" stop-color="#FFB347"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rocket body -->
+  <g transform="translate(18, 25)">
+    <!-- Flame -->
+    <path d="M-4 8 Q0 18 4 8" fill="url(#flame)" opacity="0.9">
+      <animate attributeName="d" values="M-4 8 Q0 18 4 8;M-5 8 Q0 20 5 8;M-4 8 Q0 18 4 8" dur="0.4s" repeatCount="indefinite"/>
+    </path>
+    <path d="M-2 6 Q0 14 2 6" fill="#FFB347" opacity="0.7">
+      <animate attributeName="d" values="M-2 6 Q0 14 2 6;M-3 6 Q0 16 3 6;M-2 6 Q0 14 2 6" dur="0.3s" repeatCount="indefinite"/>
+    </path>
+
+    <!-- Fins -->
+    <path d="M-7 2 L-12 10 L-5 6Z" fill="url(#logograd)" opacity="0.7"/>
+    <path d="M7 2 L12 10 L5 6Z" fill="url(#logograd)" opacity="0.7"/>
+
+    <!-- Rocket body -->
+    <rect x="-5" y="-8" width="10" height="16" rx="2" fill="url(#logograd)"/>
+
+    <!-- Nose cone -->
+    <path d="M-5 -6 Q0 -16 5 -6Z" fill="url(#logograd)"/>
+
+    <!-- Window -->
+    <circle cx="0" cy="-2" r="2.5" fill="#0B0E14"/>
+    <circle cx="0" cy="-2" r="1.8" fill="#4EC5D4" opacity="0.6"/>
+  </g>
+
+  <!-- Orbit ring -->
+  <ellipse cx="8" cy="28" rx="14" ry="4" fill="none" stroke="url(#logograd)" stroke-width="0.8" opacity="0.3" transform="rotate(-15, 8, 28)"/>
+  <circle cx="20" cy="26" r="1.2" fill="#FFB347" opacity="0.6"/>
+
+  <!-- Text -->
+  <text x="48" y="32" font-family="'Montserrat', Arial, sans-serif" font-size="22" font-weight="700" fill="url(#logograd)" letter-spacing="1">Espaço</text>
+  <text x="128" y="32" font-family="'Montserrat', Arial, sans-serif" font-size="16" font-weight="300" fill="#FFFFFF" letter-spacing="3" opacity="0.5">TECH</text>
+</svg>
