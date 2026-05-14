@@ -491,6 +491,7 @@
                             <button class="btn-primary" onclick="saveArticle()">💾 Salvar</button>
                             <button class="btn-secondary" onclick="previewArticle()">👁️ Preview</button>
                             <button class="btn-secondary" onclick="exportArticle()">📄 Exportar HTML</button>
+                            <button class="btn-secondary" onclick="loadFromFile()" id="loadFileBtn">📂 Carregar do arquivo</button>
                             <button class="btn-secondary" onclick="newArticle()" style="margin-left:auto">+ Novo</button>
                         </div>
                     </div>
@@ -684,6 +685,53 @@
         document.getElementById('edContent').value = a.content || '';
         previewArticle();
         switchPage('editor');
+        // Try to load content from the actual file
+        loadFromFile(a.file);
+    }
+
+    function loadFromFile(file) {
+        const fn = file || document.getElementById('edSlug').value.trim() + '.html';
+        if (!fn || fn === '.html') { showToast('Defina um slug primeiro', 'error'); return; }
+        document.getElementById('loadFileBtn').textContent = '⏳ Carregando...';
+        fetch(fn)
+            .then(r => { if (!r.ok) throw new Error('Arquivo não encontrado'); return r.text(); })
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                // Extract title
+                const h1 = doc.querySelector('.article-header h1');
+                if (h1) document.getElementById('edTitle').value = h1.textContent.trim();
+
+                // Extract category
+                const catEl = doc.querySelector('.article-category');
+                if (catEl) {
+                    const catText = catEl.textContent.trim().replace(/^[^\w]+/, '');
+                    const opts = document.getElementById('edCat').options;
+                    for (let o of opts) { if (catText.toLowerCase().includes(o.value.toLowerCase())) { document.getElementById('edCat').value = o.value; break; } }
+                }
+
+                // Extract image
+                const imgEl = doc.querySelector('.article-image');
+                if (imgEl) {
+                    const bg = imgEl.style.backgroundImage || '';
+                    const match = bg.match(/url\(['"]?([^'"]+)['"]?\)/);
+                    if (match) document.getElementById('edImage').value = match[1];
+                }
+
+                // Extract description from meta
+                const meta = doc.querySelector('meta[name="description"]');
+                if (meta) document.getElementById('edDesc').value = meta.getAttribute('content');
+
+                // Extract body content
+                const body = doc.querySelector('.article-body');
+                if (body) document.getElementById('edContent').value = body.innerHTML.trim();
+
+                previewArticle();
+                showToast('Conteúdo carregado do arquivo!', 'success');
+            })
+            .catch(() => showToast('Arquivo ' + fn + ' não encontrado. Salve o artigo primeiro.', 'error'))
+            .finally(() => { document.getElementById('loadFileBtn').textContent = '📂 Carregar do arquivo'; });
     }
 
     function saveArticle() {
